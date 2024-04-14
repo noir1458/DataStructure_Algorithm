@@ -106,6 +106,7 @@ def main():
     f.write(' '.join(list(map(str,Merge_sort(unsorted_list)))) + '\n')
     n=3
     f.write(' '.join(list(map(str,Merge_and_insertion_sort(unsorted_list,n)))))
+
     f.close()
     return None
 
