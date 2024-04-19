@@ -12,13 +12,9 @@
 l = [7,4,3,6,8,1,2]
 
 for i in range(len(l)):
-    min = i
-    # 처음 i 를 min으로 잡고
-    for j in range(i+1,len(l)):
-        # i+1 부터 min값을 찾는다.
+    min = i                         # 처음 i 를 min으로 잡고
+    for j in range(i+1,len(l)):     # i+1 부터 min값을 찾는다.
         if l[min] > l[j]:
-            min = j
-            #가장 작은값 인덱스를 min에
-    l[i] , l[min] = l[min], l[i]
-    #인덱스 min과 i의 값 바꾸기
+            min = j                 #가장 작은값 인덱스를 min에
+    l[i] , l[min] = l[min], l[i]    #인덱스 min과 i의 값 바꾸기
 print(l)

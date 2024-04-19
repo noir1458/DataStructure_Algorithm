@@ -4,7 +4,7 @@
 # average : O(nlogn)
 # worst : O(nlogn)
 
-# divide and conquer 알고리즘이다
+# divide and conquer
 # 분할할때 logn = depth, 합칠때 비교 연산이 있으므로 n번, 따라서 nlogn
 
 def merge(l,left,right):

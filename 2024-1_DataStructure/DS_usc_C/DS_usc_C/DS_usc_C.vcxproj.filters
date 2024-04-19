@@ -60,5 +60,23 @@
     <ClCompile Include="02_14_재귀호출을이용한팩토리얼.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="02_15_재귀호출이용한하노이탑.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="03_01_원소의논리적물리적순서확인.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="03_02_2차원배열의논리적물리적순서확인.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="03_03_순차리스트를이용한다항식덧셈.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="03_04_희소행렬의전치연산.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="04_01_단순연결리스트에노드삽입.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
