@@ -1,2 +1,2 @@
 run:
-	python3 assignment2_20220702 input.txt output.txt
+	python3 sorting.py input.txt output.txt
