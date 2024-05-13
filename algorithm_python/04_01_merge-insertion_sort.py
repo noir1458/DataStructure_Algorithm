@@ -82,3 +82,18 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+'''
+Merge-Insertion Sort는 Merge Sort와 Insertion Sort를 결합한 정렬 알고리즘입니다. 이 알고리즘은 일반적인 Merge Sort와는 달리 작은 크기의 부분 배열에 대해서는 Insertion Sort를 사용하여 성능을 향상시킵니다.
+
+일반적으로 Merge Sort는 대규모 배열을 효율적으로 정렬하는 데에 탁월한 성능을 보이지만, 배열의 크기가 작을 때에는 Insertion Sort가 더 효율적일 수 있습니다. Merge-Insertion Sort는 이러한 특성을 고려하여 배열의 크기에 따라 Merge Sort와 Insertion Sort를 적절히 선택하여 정렬을 수행합니다.
+
+Merge-Insertion Sort의 주요 특징은 다음과 같습니다:
+
+작은 크기의 배열에 대한 삽입 정렬 사용: 정렬할 배열의 크기가 일정 기준 값 이하일 때에는 Insertion Sort를 사용하여 정렬합니다. Insertion Sort는 작은 크기의 배열에 대해서는 빠르게 동작하는 특성이 있으므로, 이를 활용하여 성능을 향상시킵니다.
+
+분할 정복(Divide and Conquer) 방식의 Merge Sort 사용: 배열을 두 개의 부분 배열로 분할하고, 각 부분 배열을 재귀적으로 정렬한 후 병합하는 Merge Sort의 방식을 따릅니다. 이를 통해 배열을 더 작은 단위로 분할하고 정렬하여 최종적으로 전체 배열을 정렬합니다.
+
+Merge-Insertion Sort는 작은 크기의 배열에 대해서는 Insertion Sort를 사용하여 삽입 정렬의 이점을 살리고, 대규모 배열에 대해서는 Merge Sort를 사용하여 분할 정복의 장점을 살립니다. 이를 통해 정렬 속도를 향상시키고 효율적으로 정렬을 수행할 수 있습니다.
+'''

@@ -2,12 +2,29 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <Windows.h>
+
+#define _CRT_SECURE_NO_WARNINGS
+
+LARGE_INTEGER start, end, freq;
+
+void StartTimer() {
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&start);
+}
+
+double EndTimer() {
+    QueryPerformanceCounter(&end);
+    return ((double)(end.QuadPart - start.QuadPart) / (double)freq.QuadPart) * 1000000; // microseconds
+}
+
+
 
 // dynamic arrays struct
 typedef struct DynamicArray {
     int* d_array;
-    int capacity; // í¬ê¸°
-    int size;     // ì €ì¥ëœ ì›ì†Œ ìˆ˜
+    int capacity; // Å©±â
+    int size;     // ÀúÀåµÈ ¿ø¼Ò ¼ö
 }DynamicArray;
 
 // dyanamic_array initialization with a specific size
@@ -23,44 +40,42 @@ struct DynamicArray* dynamic_array_init(int input_size, int input_capacity) {
         return NULL;
     }
 
-    //0ìœ¼ë¡œ ë‚´ìš©ë¬¼ ì´ˆê¸°í™”
+    //0À¸·Î ³»¿ë¹° ÃÊ±âÈ­
     D_array->capacity = input_capacity;
     D_array->size = input_size;
-    memset(D_array->d_array,0,sizeof(int)*(D_array->capacity));
+    memset(D_array->d_array, 0, sizeof(int) * (D_array->capacity));
 
     return D_array;
 }
 
-// ì‚½ì… ì¤‘ ë°°ì—´ ë³µì‚¬ë¥¼ ìœ„í•œ í•¨ìˆ˜
+// »ğÀÔ Áß ¹è¿­ º¹»ç¸¦ À§ÇÑ ÇÔ¼ö
 void copy_array(int* arr1, int* arr2, int size) {
-    // arr1ì—ì„œ arr2ë¡œ ë³µì‚¬í•œë‹¤. sizeëŠ” arr1ì˜ í¬ê¸°
+    // arr1¿¡¼­ arr2·Î º¹»çÇÑ´Ù. size´Â arr1ÀÇ Å©±â
     for (int i = 0; i < size; i++)
         *(arr2 + i) = *(arr1 + i);
 }
 
-// ìš”ì†Œ ì‚½ì…ì¤‘ í¬ê¸°ì¡°ì ˆì„ ìœ„í•œ í•¨ìˆ˜
-void dynamic_array_resize(DynamicArray *D_array, int new_capacity){
-    int *new_array = (int*)malloc(sizeof(int) * new_capacity);
-    if (new_array == NULL){
+// ¿ä¼Ò »ğÀÔÁß Å©±âÁ¶ÀıÀ» À§ÇÑ ÇÔ¼ö
+void dynamic_array_resize(DynamicArray* D_array, int new_capacity) {
+    int* new_array = (int*)malloc(sizeof(int) * new_capacity);
+    if (new_array == NULL) {
         return;
     }
-    for (int i=0 ; i < D_array->size ; i++){
-        new_array[i] = D_array -> d_array[i];
+    for (int i = 0; i < D_array->size; i++) {
+        new_array[i] = D_array->d_array[i];
     }
-    free(D_array -> d_array);
+    free(D_array->d_array);
     D_array->d_array = new_array;
     D_array->capacity = new_capacity;
 }
 
 // inserting an element(back)
 struct DynamicArray* dynamic_array_insert_back(DynamicArray* D_array, int insert_element) {
-    // ë§Œì•½ ìƒˆë¡œ ì €ì¥ì‹œ capacityë¥¼ ë„˜ì–´ê°ˆê²½ìš°, ë‹¤ì‹œ í• ë‹¹í•´ì¤˜ì•¼ í•œë‹¤
+    // ¸¸¾à »õ·Î ÀúÀå½Ã capacity¸¦ ³Ñ¾î°¥°æ¿ì, ´Ù½Ã ÇÒ´çÇØÁà¾ß ÇÑ´Ù
     if (D_array->size == D_array->capacity) {
-        dynamic_array_resize(D_array,D_array->capacity * 2);
+        dynamic_array_resize(D_array, D_array->capacity * 2);
     }
 
-    // insert_elementë¥¼ insert_index ìë¦¬ì— ë„£ê³  ë‚˜ë¨¸ì§€ë¥¼ ë’¤ë¡œ + 1(sizeof(int))
-    // ë§Œì•½ ë§¨ ë§ˆì§€ë§‰ê²ƒ + ì‹œ capacityë„˜ì–´ê°ˆê²½ìš° ë‹¤ì‹œ í• ë‹¹
     D_array->d_array[D_array->size] = insert_element;
     D_array->size++;
     return D_array;
@@ -68,14 +83,14 @@ struct DynamicArray* dynamic_array_insert_back(DynamicArray* D_array, int insert
 
 // inserting an element(front)
 struct DynamicArray* dynamic_array_insert_front(DynamicArray* D_array, int insert_element) {
-    // ë§Œì•½ ìƒˆë¡œ ì €ì¥ì‹œ capacityë¥¼ ë„˜ì–´ê°ˆê²½ìš°, ë‹¤ì‹œ í• ë‹¹í•´ì¤˜ì•¼ í•œë‹¤
+    // ¸¸¾à »õ·Î ÀúÀå½Ã capacity¸¦ ³Ñ¾î°¥°æ¿ì, ´Ù½Ã ÇÒ´çÇØÁà¾ß ÇÑ´Ù
     if (D_array->size == D_array->capacity) {
-        dynamic_array_resize(D_array,D_array->capacity * 2);
+        dynamic_array_resize(D_array, D_array->capacity * 2);
     }
 
-    // ë§¨ ì•ì— ì‚½ì…í•œë‹¤. ì „ì²´ë¥¼ í•œì¹¸ì”© ë’¤ë¡œ ë°€ê³  ë§¨ ì•ìë¦¬ì— ì‚½ì…
-    for (int i = D_array->size ; i > 0; i--) {
-        D_array->d_array[i] = D_array ->d_array[i-1];
+    // ¸Ç ¾Õ¿¡ »ğÀÔÇÑ´Ù. ÀüÃ¼¸¦ ÇÑÄ­¾¿ µÚ·Î ¹Ğ°í ¸Ç ¾ÕÀÚ¸®¿¡ »ğÀÔ
+    for (int i = D_array->size; i > 0; i--) {
+        D_array->d_array[i] = D_array->d_array[i - 1];
     }
     D_array->d_array[0] = insert_element;
     D_array->size++;
@@ -85,46 +100,46 @@ struct DynamicArray* dynamic_array_insert_front(DynamicArray* D_array, int inser
 
 // inserting an element(specific)
 struct DynamicArray* dynamic_array_insert_specific(DynamicArray* D_array, int insert_element, int insert_index) {
-    // ë§Œì•½ ìƒˆë¡œ ì €ì¥ì‹œ capacityë¥¼ ë„˜ì–´ê°ˆê²½ìš°, ë‹¤ì‹œ í• ë‹¹í•´ì¤˜ì•¼ í•œë‹¤
-    if (insert_index > D_array->size){
+    // ¸¸¾à »õ·Î ÀúÀå½Ã capacity¸¦ ³Ñ¾î°¥°æ¿ì, ´Ù½Ã ÇÒ´çÇØÁà¾ß ÇÑ´Ù
+    if (insert_index > D_array->size) {
         printf("index out!!\n");
         return D_array;
     }
-    if (insert_index == 0){
-        D_array = dynamic_array_insert_front(D_array,insert_element);
-        //printf("ffff\n"); 0ë²ˆ ì¸ë±ìŠ¤ì— insert
+    if (insert_index == 0) {
+        D_array = dynamic_array_insert_front(D_array, insert_element);
+        //printf("ffff\n"); 0¹ø ÀÎµ¦½º¿¡ insert
         return D_array;
     }
-    if (insert_index == D_array->size){
-        D_array = dynamic_array_insert_back(D_array,insert_element);
-        //printf("bbbb\n"); ë§ˆì§€ë§‰ ì¸ë±ìŠ¤ì— insert
+    else if (insert_index == D_array->size) {
+        D_array = dynamic_array_insert_back(D_array, insert_element);
+        //printf("bbbb\n"); ¸¶Áö¸· ÀÎµ¦½º¿¡ insert
         return D_array;
     }
-    
-    if (D_array->size == D_array->capacity) {
-        dynamic_array_resize(D_array,D_array->capacity * 2);
-    }
+    else {
+        if (D_array->size == D_array->capacity) {
+            dynamic_array_resize(D_array, D_array->capacity * 2);
+        }
 
-    // insert_elementë¥¼ insert_index ìë¦¬ì— ë„£ê³  ë‚˜ë¨¸ì§€ë¥¼ ë’¤ë¡œ + 1(sizeof(int))
-    // ë§Œì•½ ë§¨ ë§ˆì§€ë§‰ê²ƒ + ì‹œ capacityë„˜ì–´ê°ˆê²½ìš° ë‹¤ì‹œ í• ë‹¹
-    for (int i = D_array->size; i > insert_index; i--){
-        D_array->d_array[i] = D_array->d_array[i-1];
+        // insert_element¸¦ insert_index ÀÚ¸®¿¡ ³Ö°í ³ª¸ÓÁö¸¦ µÚ·Î + 1(sizeof(int))
+        // ¸¸¾à ¸Ç ¸¶Áö¸·°Í + ½Ã capacity³Ñ¾î°¥°æ¿ì ´Ù½Ã ÇÒ´ç
+        for (int i = D_array->size; i > insert_index; i--) {
+            D_array->d_array[i] = D_array->d_array[i - 1];
+        }
+        D_array->d_array[insert_index] = insert_element;
+        D_array->size++;
+        return D_array;
     }
-    D_array->d_array[insert_index] = insert_element;
-    D_array->size++;
-    return D_array;
 }
 
 // deleting an element(front)
 struct DynamicArray* dynamic_array_delete_front(DynamicArray* D_array) {
     if (D_array->size == 0) {
-        return D_array; // ì‚­ì œí•  ìš”ì†Œê°€ ì—†ëŠ” ê²½ìš° ê·¸ëŒ€ë¡œ ë°˜í™˜
+        return D_array; // »èÁ¦ÇÒ ¿ä¼Ò°¡ ¾ø´Â °æ¿ì ±×´ë·Î ¹İÈ¯
     }
 
-    for (int i = 0; i < D_array->size ; i++){
-        D_array->d_array[i] = D_array->d_array[i+1];
+    for (int i = 0; i < D_array->size; i++) {
+        D_array->d_array[i] = D_array->d_array[i + 1];
     }
-    free(&D_array->d_array[D_array->size-1]); // ì‚­ì œí•œë¶€ë¶„ ë©”ëª¨ë¦¬ í• ë‹¹í•œê²ƒ í•´ì œ
     D_array->size--;
     return D_array;
 }
@@ -132,10 +147,9 @@ struct DynamicArray* dynamic_array_delete_front(DynamicArray* D_array) {
 // deleting an element(back)
 struct DynamicArray* dynamic_array_delete_back(DynamicArray* D_array) {
     if (D_array->size == 0) {
-        return D_array; // ì‚­ì œí•  ìš”ì†Œê°€ ì—†ëŠ” ê²½ìš° ê·¸ëŒ€ë¡œ ë°˜í™˜
+        return D_array; // »èÁ¦ÇÒ ¿ä¼Ò°¡ ¾ø´Â °æ¿ì ±×´ë·Î ¹İÈ¯
     }
 
-    free(&D_array->d_array[D_array->size-1]); // ì‚­ì œí•œë¶€ë¶„ ë©”ëª¨ë¦¬ í• ë‹¹í•œê²ƒ í•´ì œ
     D_array->size--;
     return D_array;
 }
@@ -143,50 +157,57 @@ struct DynamicArray* dynamic_array_delete_back(DynamicArray* D_array) {
 // deleting an element(specific)
 struct DynamicArray* dynamic_array_delete_specific(DynamicArray* D_array, int delete_index) {
     if (D_array->size == 0) {
-        return D_array; // ì‚­ì œí•  ìš”ì†Œê°€ ì—†ëŠ” ê²½ìš° ê·¸ëŒ€ë¡œ ë°˜í™˜
+        return D_array; // »èÁ¦ÇÒ ¿ä¼Ò°¡ ¾ø´Â °æ¿ì ±×´ë·Î ¹İÈ¯
     }
-
-    if (delete_index < 0 || delete_index >= D_array->size){
+    if (delete_index == 0) {
+        D_array = dynamic_array_delete_front(D_array);
+        return D_array;
+    }
+    if (delete_index == D_array->size - 1) {
+        D_array = dynamic_array_delete_back(D_array);
+        return D_array;
+    }
+    else if (delete_index < 0 || delete_index >= D_array->size) {
         printf("index out!!\n");
         return D_array;
     }
-    
-    for (int i = delete_index; i < D_array->size ; i++){
-        D_array->d_array[i] = D_array->d_array[i+1];
+    else {
+        for (int i = delete_index; i < D_array->size; i++) {
+            D_array->d_array[i] = D_array->d_array[i + 1];
+        }
+        D_array->size--;
+        return D_array;
     }
-    free(&D_array->d_array[D_array->size-1]); // ì‚­ì œí•œë¶€ë¶„ ë©”ëª¨ë¦¬ í• ë‹¹í•œê²ƒ í•´ì œ
-    D_array->size--;
-    return D_array;
 }
 
 // access an element at a specific index
 int dynamic_array_access(DynamicArray* D_array, int access_index) {
-    if (access_index < 0 || access_index >= D_array->size){
+    if (access_index < 0 || access_index >= D_array->size) {
         printf("index out!!\n");
         return 0;
     }
     int* return_element = D_array->d_array + (access_index);
-    return* return_element;
+    return*return_element;
 }
 
-// dynamic array ì¶œë ¥ í•¨ìˆ˜
-void dynamic_array_print(DynamicArray* D_array){
+// dynamic array Ãâ·Â ÇÔ¼ö
+void dynamic_array_print(DynamicArray* D_array) {
     for (int i = 0; i < D_array->size; i++)
     {
-        printf("%d ",D_array->d_array[i]);
+        printf("%d ", D_array->d_array[i]);
     }
     printf("\nSize : %d, Capacity: %d\n\n", D_array->size, D_array->capacity);
 }
 
 
 typedef struct Singly_linked_lists {
-    struct Singly_linked_lists* next; // ë‹¤ìŒ ë…¸ë“œë¥¼ ê°€ë¦¬í‚¤ëŠ” í¬ì¸í„°
-    int data;                         // ë…¸ë“œì˜ ë°ì´í„°
+    struct Singly_linked_lists* next; // ´ÙÀ½ ³ëµå¸¦ °¡¸®Å°´Â Æ÷ÀÎÅÍ
+    int data;                         // ³ëµåÀÇ µ¥ÀÌÅÍ
 } Singly_linked_lists;
 
 // linked_list initialization (empty list)
 struct Singly_linked_lists* linked_list_init() {
-    // ë§í¬ë“œë¦¬ìŠ¤íŠ¸ëŠ” ê°œìˆ˜ë¥¼ ì •í•˜ëŠ”ê²Œ ì•„ë‹ˆë¼ ë…¸ë“œ í•˜ë‚˜ë¥¼ ìƒì„±í•˜ê³  ë°˜í™˜í•˜ê¸°
+    // ¸µÅ©µå¸®½ºÆ®´Â °³¼ö¸¦ Á¤ÇÏ´Â°Ô ¾Æ´Ï¶ó ³ëµå ÇÏ³ª¸¦ »ı¼ºÇÏ°í ¹İÈ¯ÇÏ±â
     Singly_linked_lists* linked_list = (struct Singly_linked_lists*)malloc(sizeof(struct Singly_linked_lists));
     linked_list->next = NULL;
     linked_list->data = 0;
@@ -197,7 +218,7 @@ struct Singly_linked_lists* linked_list_init() {
 struct Singly_linked_lists* linked_list_insert_front(Singly_linked_lists* linked_list, int insert_element) {
     Singly_linked_lists* linked_list_front = linked_list_init();
     linked_list_front->data = insert_element;
-    //ì•ì— ì—°ê²°
+    //¾Õ¿¡ ¿¬°á
     linked_list_front->next = linked_list->next;
     return linked_list_front;
 }
@@ -206,30 +227,44 @@ struct Singly_linked_lists* linked_list_insert_front(Singly_linked_lists* linked
 struct Singly_linked_lists* linked_list_insert_back(Singly_linked_lists* linked_list, int insert_element) {
     Singly_linked_lists* linked_list_back = linked_list_init();
     linked_list_back->data = insert_element;
-    //ë’¤ì— ì—°ê²°
-    Singly_linked_lists* start = linked_list; // ì²˜ìŒ ë…¸ë“œë¥¼ ì €ì¥í•˜ê³  ë°˜í™˜
-    while (linked_list->next != NULL){
+    //µÚ¿¡ ¿¬°á
+    Singly_linked_lists* start = linked_list; // Ã³À½ ³ëµå¸¦ ÀúÀåÇÏ°í ¹İÈ¯
+    while (linked_list->next != NULL) {
         linked_list = linked_list->next;
     }
     linked_list->next = linked_list_back;
     return start;
 }
 
+// insert specific ÇÔ¼ö¿¡¼­ ¸¶Áö¸· »ğÀÔÀÇ °æ¿ì insert back ÇÔ¼ö¸¦ È£ÃâÇÏ±â À§ÇØ ¿¬°á¸®½ºÆ® ±æÀÌ¸¦ ¹İÈ¯
+int linked_list_size(Singly_linked_lists* linked_list) {
+    int size = 0;
+    Singly_linked_lists* l = linked_list;
+    while (l != NULL) {
+        size++;
+        l = l->next;
+    }
+    return size;
+}
+
 // inserting an element(specific)
 struct Singly_linked_lists* linked_list_insert_specific(Singly_linked_lists* linked_list, int insert_element, int insert_index) {
-    if (insert_index == 0){
-        linked_list = linked_list_insert_front(linked_list,insert_element);
+    if (insert_index == 0) {
+        linked_list = linked_list_insert_front(linked_list, insert_element);
         return linked_list;
     }
-
+    if (insert_index == linked_list_size(linked_list)) {   // ¸¶Áö¸· »ğÀÔÀÎ °æ¿ì µÚ¿¡ »ğÀÔÇÏ´Â ÇÔ¼ö È£Ãâ
+        linked_list = linked_list_insert_back(linked_list, insert_element);
+        return linked_list;
+    }
     Singly_linked_lists* linked_list_new = linked_list_init();
     linked_list_new->data = insert_element;
 
-    Singly_linked_lists* start = linked_list; // ì²˜ìŒ ë…¸ë“œë¥¼ ì €ì¥í•˜ê³  ë°˜í™˜
-    // insert index - 1 ê¹Œì§€ ì ‘ê·¼
+    Singly_linked_lists* start = linked_list; // Ã³À½ ³ëµå¸¦ ÀúÀåÇÏ°í ¹İÈ¯
+    // insert index - 1 ±îÁö Á¢±Ù
     int count = 0;
-    while (count != insert_index - 1){
-        count ++;
+    while (count != insert_index - 1) {
+        count++;
         linked_list = linked_list->next;
     }
     linked_list_new->next = linked_list->next;
@@ -238,8 +273,8 @@ struct Singly_linked_lists* linked_list_insert_specific(Singly_linked_lists* lin
 }
 
 // deleting an element(front)
-struct Singly_linked_lists* linked_lists_delete_front(Singly_linked_lists* linked_list) {
-    if (linked_list->next == NULL || linked_list == NULL){
+struct Singly_linked_lists* linked_list_delete_front(Singly_linked_lists* linked_list) {
+    if (linked_list->next == NULL || linked_list == NULL) {
         return NULL;
     }
     Singly_linked_lists* del_node = linked_list;
@@ -249,13 +284,13 @@ struct Singly_linked_lists* linked_lists_delete_front(Singly_linked_lists* linke
 }
 
 // deleting an element(back)
-struct Singly_linked_lists* linked_lists_delete_back(Singly_linked_lists* linked_list) {
-    if (linked_list->next == NULL || linked_list == NULL){
+struct Singly_linked_lists* linked_list_delete_back(Singly_linked_lists* linked_list) {
+    if (linked_list->next == NULL || linked_list == NULL) {
         return NULL;
     }
     Singly_linked_lists* start = linked_list;
-    while (linked_list->next->next != NULL){
-        linked_list = linked_list -> next;
+    while (linked_list->next->next != NULL) {
+        linked_list = linked_list->next;
     }
     Singly_linked_lists* del_node = linked_list->next;
     linked_list->next = NULL;
@@ -264,114 +299,219 @@ struct Singly_linked_lists* linked_lists_delete_back(Singly_linked_lists* linked
 }
 
 // deleting an element(specific)
-struct Singly_linked_lists* linked_lists_delete_specific(Singly_linked_lists* linked_list, int delete_index) {
-    if (linked_list->next == NULL || linked_list == NULL){
+struct Singly_linked_lists* linked_list_delete_specific(Singly_linked_lists* linked_list, int delete_index) {
+    if (linked_list->next == NULL || linked_list == NULL) {
         return NULL;
     }
-    Singly_linked_lists* start = linked_list;
-    int count = 0;
-    while (count + 1 != delete_index){
-        linked_list = linked_list -> next;
-        count++;
+    if (delete_index == 0) {
+        linked_list = linked_list_delete_front(linked_list);
+        return linked_list;
     }
-    Singly_linked_lists* del_node = linked_list->next;
-    linked_list->next = linked_list->next->next;
-    free(del_node);
-    return start;
+    else if (delete_index == linked_list_size(linked_list)) {
+        linked_list = linked_list_delete_back(linked_list);
+        return linked_list;
+    }
+    else {
+        Singly_linked_lists* start = linked_list;
+        int count = 0;
+        while (count + 1 != delete_index) {
+            linked_list = linked_list->next;
+            count++;
+        }
+        Singly_linked_lists* del_node = linked_list->next;
+        linked_list->next = linked_list->next->next;
+
+        free(del_node);
+        return start;
+    }
 }
 
 // accessing the element at the head
-int linked_lists_access(Singly_linked_lists* linked_list, int access_index) {
+int linked_list_access(Singly_linked_lists* linked_list, int access_index) {
     int count = 0;
-    while (count < access_index){
-        count ++;
-        if (linked_list->next == NULL){
+    while (count < access_index) {
+        count++;
+        if (linked_list->next == NULL) {
             break;
         }
-        linked_list = linked_list-> next;
+        linked_list = linked_list->next;
     }
 
-    if (linked_list == NULL){ // Nullê²½ìš° 0 ë°˜í™˜í•˜ê¸°
+    if (linked_list == NULL) { // Null°æ¿ì 0 ¹İÈ¯ÇÏ±â
         printf("error");
         return 0;
     }
-    else{
+    else {
         return linked_list->data;
     }
 }
 
-// linked list ì¶œë ¥í•¨ìˆ˜
-void linked_lists_print(Singly_linked_lists* linked_list){
+// linked list Ãâ·ÂÇÔ¼ö
+void linked_list_print(Singly_linked_lists* linked_list) {
     int count = 0;
-    while (linked_list != NULL){
-        printf("%d ",linked_list->data);
-        count ++;
-        linked_list = linked_list -> next;
+    while (linked_list != NULL) {
+        printf("%d ", linked_list->data);
+        count++;
+        linked_list = linked_list->next;
     }
-    printf("\nsize : %d\n\n",count);
+    printf("\nsize : %d\n\n", count);
 }
 
-//DynamicArray insert test í•¨ìˆ˜
-void test_insert_DynamicArray(int num){
-    DynamicArray* D1 = dynamic_array_init(0, 1);
-    for (int i = 0; i < num; i++){
-        dynamic_array_insert_front(D1,1);
+
+
+
+
+//DynamicArray insert test ÇÔ¼ö, numÀº dataÀÇ °³¼ö
+void test_insert_DynamicArray(int num) {
+    
+    DynamicArray* D1 = dynamic_array_init(2, 2); //capacity 2, size 2ÀÇ µ¿Àû¹è¿­(size°¡ 0ÀÌ¸é mod¿¬»ê¿¡¼­ ¹®Á¦°¡ »ı±æ¼ö ÀÖÀ¸¹Ç·Î)
+
+    StartTimer();
+
+    for (int i = 0; i < num; i++) {
+        int random_index = rand() % D1->size;
+        dynamic_array_insert_specific(D1, 1, random_index);
     }
-    dynamic_array_print(D1);
+    //dynamic_array_print(D1);
+
+    printf("Dynamic array insert\n");
+
+    double elapsedTime = EndTimer(); // °æ°ú ½Ã°£ °è»ê ¹× ¹İÈ¯
+    printf("Elapsed Time: %.20f seconds\n", elapsedTime * 0.000001);
 
     free(D1->d_array);
     free(D1);
 }
 
-//DynamicArray delete test í•¨ìˆ˜
-void test_delete_DynamicArray(int num){
+//DynamicArray delete test ÇÔ¼ö
+void test_delete_DynamicArray(int num) {
     DynamicArray* D1 = dynamic_array_init(num, num);
-    for (int i = 0; i < num; i++){
-        dynamic_array_delete_front(D1);
+
+    StartTimer();
+
+    for (int i = 0; i < num; i++) {
+        int random_index = rand() % D1->size;
+        dynamic_array_delete_specific(D1, random_index);
     }
-    dynamic_array_print(D1);
+    //dynamic_array_print(D1);
+
+    printf("Dynamic array delete\n");
+    
+    double elapsedTime = EndTimer(); // °æ°ú ½Ã°£ °è»ê ¹× ¹İÈ¯
+    printf("Elapsed Time: %.20f seconds\n", elapsedTime * 0.000001);
 
     free(D1->d_array);
     free(D1);
 }
 
-//DynamicArray access test í•¨ìˆ˜
-void test_access_DynamicArray(int num){
-    DynamicArray* D1 = dynamic_array_init(0, 1);
+//DynamicArray access test ÇÔ¼ö
+void test_access_DynamicArray(int num) {
+    DynamicArray* D1 = dynamic_array_init(num, num);
+
+    StartTimer();
+
+    for (int i = 0; i < num; i++) {
+        int random_index = rand() % D1->size;
+        int access = dynamic_array_access(D1, random_index);
+    }
+    //dynamic_array_print(D1);
+
+    printf("Dynamic array access\n");
     
-    
+    double elapsedTime = EndTimer(); // °æ°ú ½Ã°£ °è»ê ¹× ¹İÈ¯
+    printf("Elapsed Time: %.20f seconds\n", elapsedTime * 0.000001);
+
     free(D1->d_array);
     free(D1);
 }
 
-// LinkedList testí•¨ìˆ˜
-void test_LinkedList(){
+// LinkedList insert testÇÔ¼ö
+void test_insert_LinkedList(int num) {
     Singly_linked_lists* L1 = linked_list_init();
-    linked_lists_print(L1);
+
+    StartTimer();
+
+    for (int i = 0; i < num; i++) {
+        int random_index = rand() % linked_list_size(L1);
+        linked_list_insert_specific(L1, 1, random_index);
+    }
+    //linked_list_print(L1);
+
+    printf("Linked list insert\n");
+    
+    double elapsedTime = EndTimer(); // °æ°ú ½Ã°£ °è»ê ¹× ¹İÈ¯
+    printf("Elapsed Time: %.20f seconds\n", elapsedTime * 0.000001);
+
     free(L1);
 }
 
+// LinkedList delete testÇÔ¼ö
+void test_delete_LinkedList(int num) {
+    Singly_linked_lists* L1 = linked_list_init();
+    for (int i = 0; i < num; i++) {
+        L1 = linked_list_insert_front(L1, 1);  //±æÀÌ numÀÇ linked list¸¦ ¸¸µç´Ù
+    }
+
+    StartTimer();
+
+    for (int i = 0; i < num; i++) {
+        int random_index = rand() % linked_list_size(L1);
+        linked_list_delete_specific(L1, random_index);
+    }
+    //linked_list_print(L1);
+
+    printf("Linked list delete\n");
+    
+    double elapsedTime = EndTimer(); // °æ°ú ½Ã°£ °è»ê ¹× ¹İÈ¯
+    printf("Elapsed Time: %.20f seconds\n", elapsedTime * 0.000001);
+
+    free(L1);
+}
+
+// LinkedList access testÇÔ¼ö
+void test_access_LinkedList(int num) {
+    Singly_linked_lists* L1 = linked_list_init();
+    for (int i = 0; i < num; i++) {
+        L1 = linked_list_insert_front(L1, 1);  //±æÀÌ numÀÇ linked list¸¦ ¸¸µç´Ù
+    }
+
+    StartTimer();
+
+    for (int i = 0; i < num; i++) {
+        int random_index = rand() % linked_list_size(L1);
+        int access = linked_list_access(L1, random_index);
+        //printf("access : %d",access);
+    }
+    //linked_list_print(L1);
+
+    printf("Linked list access\n");
+    
+    double elapsedTime = EndTimer(); // °æ°ú ½Ã°£ °è»ê ¹× ¹İÈ¯
+    printf("Elapsed Time: %.20f seconds\n", elapsedTime * 0.000001);
+
+    free(L1);
+}
+
+// test insert, delete, access
+void test(int size) {    // vary the number of elements in the data structure
+    printf("\ndata size is %d\n", size);
+    test_insert_DynamicArray(size);
+    test_delete_DynamicArray(size);
+    test_access_DynamicArray(size);
+
+    test_insert_LinkedList(size);
+    test_delete_LinkedList(size);
+    test_access_LinkedList(size);
+}
 
 int main() {
-    int select_input = 0;
-    int size = 0;
-    printf("1.DyanmicArray\n");
-    printf("2.LinkedList\n");
-    printf("test select : ");
-    scanf("%d",&select_input); // í…ŒìŠ¤íŠ¸í• ê²ƒ ì„ íƒ
-    printf("size : ");
-    scanf("%d",&size); // vary the number of elements in the data structure
-    printf("\n\n");
+    srand(time(NULL)); // ³­¼ö ÃÊ±âÈ­
 
-    clock_t start = clock(); // record the execution time
-    if (select_input==1){
-        test_insert_DynamicArray(size);
-    }
-    else{
-        test_LinkedList();
-    }
-    clock_t end = clock();
-    printf("execute time : %d\n",(double)(end-start) / CLOCKS_PER_SEC);
-    printf("----");
+    test(10);
+    test(100);
+    test(1000);
+    test(10000);
+
+    getchar();
     return 0;
 }
