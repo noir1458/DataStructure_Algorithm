@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\noir1\\Documents\\git\\DataStructure_Algorithm\\2024-1_DataStructure\\assignment1\\assignment_vs\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8D533780-7CA3-4BAB-A0FB-48A6A293BC89}|assignment\\assignment.vcxproj|C:\\Users\\noir1\\Documents\\git\\DataStructure_Algorithm\\2024-1_DataStructure\\assignment1\\assignment_vs\\assignment\\assignment1.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8D533780-7CA3-4BAB-A0FB-48A6A293BC89}|assignment\\assignment.vcxproj|solutionrelative:assignment\\assignment1.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "assignment1.c",
+              "DocumentMoniker": "C:\\Users\\noir1\\Documents\\git\\DataStructure_Algorithm\\2024-1_DataStructure\\assignment1\\assignment_vs\\assignment\\assignment1.c",
+              "RelativeDocumentMoniker": "assignment\\assignment1.c",
+              "ToolTip": "C:\\Users\\noir1\\Documents\\git\\DataStructure_Algorithm\\2024-1_DataStructure\\assignment1\\assignment_vs\\assignment\\assignment1.c",
+              "RelativeToolTip": "assignment\\assignment1.c",
+              "ViewState": "AQIAAO0BAAAAAAAAAAAswOgBAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-05-27T07:58:25.919Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
